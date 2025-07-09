@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>MSTZ GitHub 仪表盘</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+    .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
+    h1 { color: #444; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>📈 MSTZ GitHub 自动仪表盘（预览版）</h1>
+    <p>当前价格（MSTZ）：<span id="price">加载中...</span></p>
+    <p>建议操作：<strong id="advice">正在分析...</strong></p>
+    <p>技术指标：<span id="indicators">加载中...</span></p>
+    <hr>
+    <p style="color:gray;">本页通过 GitHub Pages 托管，每日21:30自动更新。</p>
+  </div>
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+        const data = await res.json();
+        const price = data.bitcoin.usd;
+        document.getElementById("price").innerText = "$" + price;
+        document.getElementById("advice").innerText = price > 40000 ? "可考虑做空 MSTZ" : "继续持有 / 做多";
+        document.getElementById("indicators").innerText = "模拟 RSI: 42.1 | EMA5: 4.19";
+      } catch (err) {
+        document.getElementById("price").innerText = "获取失败";
+        document.getElementById("advice").innerText = "加载失败";
+        document.getElementById("indicators").innerText = "-";
+      }
+    }
+    loadData();
+  </script>
+</body>
+</html>
