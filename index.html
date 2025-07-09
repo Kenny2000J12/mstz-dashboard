@@ -2,59 +2,30 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>MSTZ 正式版量化交易仪表盘</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            background-color: #111;
-            color: #fff;
-            font-family: sans-serif;
-            padding: 20px;
-        }
-        .card {
-            background-color: #222;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.6);
-        }
-        h1, h2 {
-            color: #fff;
-        }
-        iframe {
-            width: 100%;
-            height: 480px;
-            border: none;
-            background-color: #000;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>MSTZ 低吸高抛策略仪表盘</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; color: #222; padding: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+    h1, h2 { color: #111; }
+    ul { padding-left: 20px; }
+  </style>
 </head>
 <body>
-    <h1>MSTZ 正式版量化交易仪表盘</h1>
+  <h1>MSTZ 短线量化仪表盘（低吸高抛模型）</h1>
 
-    <div class="card">
-        <h2>今日操作建议（自动分析）</h2>
-        <p><strong>当前建议：</strong> 观察中 / 建议轻仓已有</p>
-        <p><strong>分析逻辑：</strong> 开盘价仍跌破 EMA5，RSI 回升至安全区间，短线多头动能增强。</p>
-        <ul>
-            <li>入场区域：突破 4.25 可轻仓</li>
-            <li>止损：跌破 4.05</li>
-            <li>止盈区间：4.43 ～ 4.50</li>
-        </ul>
-        <p><strong>指标状态：</strong> RSI: 46.7 | EMA5: 4.18 | 当前价: 4.21</p>
-    </div>
+  <div class="card">
+    <h2>策略资金曲线图</h2>
+    <img src="strategy_chart_lowsell.png" alt="策略回测收益曲线" style="width:100%; max-width:800px;">
+  </div>
 
-    <div class="card">
-        <h2>MSTZ 实时图表</h2>
-        <iframe src="https://www.tradingview.com/embed-widget/symbol-overview/?locale=zh_CN&symbols=NASDAQ:MSTZ"></iframe>
-    </div>
+  <div class="card">
+    <h2>历史交易信号</h2>
+    <p>请下载：<a href="trade_signals.csv" download>trade_signals.csv</a></p>
+  </div>
 
-    <div class="card">
-        <h2>MSTR 同步走势</h2>
-        <iframe src="https://www.tradingview.com/embed-widget/mini-symbol-overview/?locale=zh_CN&symbol=NASDAQ:MSTR&width=100%&height=400"></iframe>
-    </div>
-
-    <p style="color:#888;">本页通过 GitHub Pages 托管，每日21:30自动更新。</p>
+  <p style="font-size: 0.9em; color: #888; margin-top: 40px;">
+    本页面由 GitHub Actions 自动更新，每15分钟运行一次模型并生成最新图表。
+  </p>
 </body>
 </html>
