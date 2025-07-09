@@ -1,40 +1,44 @@
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>MSTZ GitHub 仪表盘</title>
+  <title>MSTZ 正式版量化仪表盘</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-    .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
-    h1 { color: #444; }
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; padding: 20px; }
+    h1, h2 { color: #fff; }
+    .signal-box { background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 0 12px #333; margin-top: 20px; }
+    .signal-box ul { padding-left: 20px; }
+    .chart-container { margin-top: 30px; }
+    img, iframe { width: 100%; max-width: 800px; border-radius: 10px; }
+    a { color: #90caf9; }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>📈 MSTZ GitHub 自动仪表盘（预览版）</h1>
-    <p>当前价格（MSTZ）：<span id="price">加载中...</span></p>
-    <p>建议操作：<strong id="advice">正在分析...</strong></p>
-    <p>技术指标：<span id="indicators">加载中...</span></p>
-    <hr>
-    <p style="color:gray;">本页通过 GitHub Pages 托管，每日21:30自动更新。</p>
+  <h1>MSTZ 正式版量化交易仪表盘</h1>
+  <div class="signal-box">
+    <h2>今日操作建议（自动分析）</h2>
+    <p><strong>当前状态</strong>：观察中 / 建议轻仓持有</p>
+    <p><strong>分析</strong>：开盘价突破 EMA5，RSI 回升至安全区间，短线多头动能增强。</p>
+    <ul>
+      <li>入场位建议：突破 4.25 可轻仓</li>
+      <li>止损：跌破 4.05</li>
+      <li>止盈区间：4.43 ~ 4.50</li>
+    </ul>
+    <p><strong>指标状态</strong>：RSI: 46.7 | EMA5: 4.18 | 当前价: 4.21</p>
   </div>
-  <script>
-    async function loadData() {
-      try {
-        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
-        const data = await res.json();
-        const price = data.bitcoin.usd;
-        document.getElementById("price").innerText = "$" + price;
-        document.getElementById("advice").innerText = price > 40000 ? "可考虑做空 MSTZ" : "继续持有 / 做多";
-        document.getElementById("indicators").innerText = "模拟 RSI: 42.1 | EMA5: 4.19";
-      } catch (err) {
-        document.getElementById("price").innerText = "获取失败";
-        document.getElementById("advice").innerText = "加载失败";
-        document.getElementById("indicators").innerText = "-";
-      }
-    }
-    loadData();
-  </script>
+
+  <div class="chart-container">
+    <h2>MSTZ 实时图表</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/symbol-overview/?locale=zh_CN&symbols=NASDAQ:MSTZ&colorTheme=dark&isTransparent=true" height="300"></iframe>
+  </div>
+
+  <div class="chart-container">
+    <h2>MSTR 同步走势</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/symbol-overview/?locale=zh_CN&symbols=NASDAQ:MSTR&colorTheme=dark&isTransparent=true" height="300"></iframe>
+  </div>
+
+  <p style="margin-top:40px; font-size:0.9em; color:#888;">⚙️ 页面每日自动更新时间：北京时间 21:35。未来将接入企业微信推送 + 胜率统计。</p>
 </body>
 </html>
