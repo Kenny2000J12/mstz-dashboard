@@ -1,32 +1,28 @@
-name: MSTZ Auto Update (15min)
+
+name: MSTZ Auto Signal (15min)
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # 每15分钟执行一次
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
       - name: Install dependencies
-        run: pip install yfinance pandas
-
-      - name: Run strategy script
+        run: pip install yfinance pandas matplotlib
+      - name: Run Strategy
         run: python main.py
-
-      - name: Commit updated index.html
+      - name: Commit Results
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add index.html
-          git commit -m "Auto update MSTZ HTML every 15min"
+          git add index.html trade_signals.csv strategy_chart_lowsell.png
+          git commit -m "Update signal every 15min"
           git push
