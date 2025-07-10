@@ -1,31 +1,67 @@
 
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>MSTZ 低吸高抛策略仪表盘</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f9; color: #222; padding: 20px; }
-    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
-    h1, h2 { color: #111; }
-    ul { padding-left: 20px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>MSTZ 2min Signal Dashboard</title>
+    <meta http-equiv="refresh" content="120"> <!-- 每两分钟刷新 -->
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            text-align: center;
+        }
+        .signal-box {
+            background-color: #222;
+            border: 2px solid #555;
+            border-radius: 10px;
+            padding: 30px;
+            display: inline-block;
+            margin-top: 50px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+        #signal {
+            font-size: 3em;
+            color: #00FF99;
+        }
+        .timestamp {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
-  <h1>MSTZ 短线量化仪表盘（低吸高抛模型）</h1>
+    <h1>MSTZ 2分钟交易信号</h1>
+    <div class="signal-box">
+        <div id="signal">信号加载中...</div>
+        <div class="timestamp">最后更新：<span id="timestamp">--:--</span></div>
+    </div>
 
-  <div class="card">
-    <h2>策略资金曲线图</h2>
-    <img src="strategy_chart_lowsell.png" alt="策略回测收益曲线" style="width:100%; max-width:800px;">
-  </div>
+    <script>
+        async function fetchSignal() {
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+                const data = await res.json();
+                const signal = generateMockSignal(); // 使用模拟信号
+                document.getElementById("signal").innerText = signal;
+                document.getElementById("timestamp").innerText = new Date().toLocaleTimeString();
+            } catch (error) {
+                document.getElementById("signal").innerText = "获取失败";
+            }
+        }
 
-  <div class="card">
-    <h2>历史交易信号</h2>
-    <p>请下载：<a href="trade_signals.csv" download>trade_signals.csv</a></p>
-  </div>
+        function generateMockSignal() {
+            const signals = ["买入", "持有", "卖出"];
+            return signals[Math.floor(Math.random() * signals.length)];
+        }
 
-  <p style="font-size: 0.9em; color: #888; margin-top: 40px;">
-    本页面由 GitHub Actions 自动更新，每15分钟运行一次模型并生成最新图表。
-  </p>
+        fetchSignal();
+    </script>
 </body>
 </html>
