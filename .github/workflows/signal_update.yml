@@ -2,7 +2,7 @@ name: Update Signals
 
 on:
   schedule:
-    - cron: '30 13 * * *'  # 每天21:30北京时间 (13:30 UTC)
+    - cron: '30 13 * * *'  # 每天21:30北京时间
   workflow_dispatch:
 
 jobs:
