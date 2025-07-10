@@ -29,4 +29,5 @@ jobs:
           git config user.email "github-actions@github.com"
           git add trade_signals.json
           git commit -m "Auto update trade signals" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/Kenny200012/mstz-dashboard.git HEAD:main
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/kenny2000j12/mstz-dashboard.git HEAD:main
+
