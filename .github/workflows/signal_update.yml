@@ -2,35 +2,32 @@ name: Update Signals
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # 每天北京时间 21:00 运行
+    - cron: '*/15 * * * *'  # 每15分钟运行一次
   workflow_dispatch:
 
 jobs:
   update-signals:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
-        run: pip install --upgrade pip
+      - name: Run signal script
+        run: |
+          python mstw_quant_signal.py
 
-      - name: Run Signal Script
-        run: python mstz_quant_signal.py
-
-      - name: Commit and Push Changes
+      - name: Commit & Push
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config user.name "kenny2000j12"
-          git config user.email "kenny2000j12@users.noreply.github.com"
+          git config --global user.email "kenny2000j12@users.noreply.github.com"
+          git config --global user.name "kenny2000j12"
+          git remote set-url origin https://kenny2000j12:${GH_TOKEN}@github.com/kenny2000j12/mstz-dashboard.git
           git add trade_signals.json
           git commit -m "Auto update trade signals" || echo "No changes to commit"
-          git remote set-url origin https://kenny2000j12:${GH_TOKEN}@github.com/kenny2000j12/mstz-dashboard.git
           git push origin main
