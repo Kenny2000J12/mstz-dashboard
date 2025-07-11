@@ -1,32 +1,28 @@
-name: Update Signals
+
+name: Update Quant Signal Every 2 Minutes
 
 on:
   schedule:
-    - cron: '0 */3 * * *'  # 每3小时自动运行
-  workflow_dispatch:       # 允许手动运行
+    - cron: "*/2 * * * *"
+  workflow_dispatch:
 
 jobs:
-  update-signals:
+  update-signal:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-
-      - name: Run signal script
+          python-version: 3.x
+      - name: Install dependencies
+        run: pip install yfinance pandas
+      - name: Run quant script
         run: python mstz_quant_signal.py
-
-      - name: Commit & Push Changes
+      - name: Commit and push
         run: |
-          git config user.name "kenny2000j12"
-          git config user.email "kenny2000j12@users.noreply.github.com"
+          git config --global user.name "MSTZ Bot"
+          git config --global user.email "bot@example.com"
           git add trade_signals.json
-          git commit -m "Auto update trade signals" || echo "No changes to commit"
-          git push https://kenny2000j12:${{ secrets.GH_TOKEN }}@github.com/kenny2000j12/mstz-dashboard.git HEAD:main
+          git commit -m "Auto update signal"
+          git push
