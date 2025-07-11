@@ -1,29 +1,27 @@
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>MSTZ 高频量化交易信号</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MSTZ 高频交易仪表盘</title>
   <style>
-    body { font-family: Arial; background: #10111a; color: #fff; text-align: center; padding: 2em; }
-    h1 { font-size: 1.8em; margin-bottom: 1em; }
-    .signal-box { font-size: 1.4em; font-weight: bold; margin-top: 1em; }
+    body { font-family: Arial, sans-serif; background: #0f111a; color: #fff; text-align: center; padding: 2em; }
+    h1 { font-size: 1.5em; margin-bottom: 1em; }
+    #signal { font-size: 2em; font-weight: bold; color: gold; }
   </style>
 </head>
 <body>
   <h1>MSTZ 高频量化交易信号</h1>
-  <div id="signal2m" class="signal-box">2分钟信号加载中...</div>
-  <div id="signal15m" class="signal-box">15分钟信号加载中...</div>
-  <div id="signal30m" class="signal-box">30分钟信号加载中...</div>
+  <div id="signal">加载中...</div>
   <script>
     async function fetchSignal() {
       try {
-        const res = await fetch("trade_signals.json?cache=" + Date.now());
+        const res = await fetch('trade_signals.json?cache=' + Date.now());
         const data = await res.json();
-        document.getElementById("signal2m").innerText = "2分钟信号：" + (data["2m"] || "暂无");
-        document.getElementById("signal15m").innerText = "15分钟信号：" + (data["15m"] || "暂无");
-        document.getElementById("signal30m").innerText = "30分钟信号：" + (data["30m"] || "暂无");
+        document.getElementById('signal').innerText = data.signal || "暂无信号";
       } catch {
-        document.getElementById("signal2m").innerText = "加载失败";
+        document.getElementById('signal').innerText = "加载失败";
       }
     }
     fetchSignal();
