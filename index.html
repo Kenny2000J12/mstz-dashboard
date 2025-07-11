@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quant Signal Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #0d1117; color: #e6edf3; }
+    h1 { font-size: 24px; margin-bottom: 20px; }
+    .signal-block { margin-bottom: 16px; border: 1px solid #444; padding: 10px; border-radius: 10px; }
+    .signal-title { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>📈 MSTZ 交易信号面板</h1>
+  <div id="signals">加载中...</div>
+
+  <script>
+    async function fetchSignals() {
+      const res = await fetch('trade_signals.json?' + Date.now());
+      const data = await res.json();
+      const container = document.getElementById('signals');
+      container.innerHTML = '';
+      for (const [key, val] of Object.entries(data)) {
+        const block = document.createElement('div');
+        block.className = 'signal-block';
+        block.innerHTML = `<div class="signal-title">${key} 信号</div>
+          <div>时间: ${val.time}</div>
+          <div>价格: $${val.close}</div>
+          <div>操作建议: ${val.signal}</div>
+          <div>仓位策略: ${val.position}</div>`;
+        container.appendChild(block);
+      }
+    }
+    fetchSignals();
+    setInterval(fetchSignals, 120000); // 每2分钟刷新
+  </script>
+</body>
+</html>
+    
