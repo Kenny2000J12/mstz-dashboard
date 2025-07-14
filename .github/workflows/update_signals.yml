@@ -1,1 +1,33 @@
+name: Update Trade Signals
+
+on:
+  schedule:
+    - cron: "*/2 * * * *"  # 每2分钟
+  workflow_dispatch:
+
+jobs:
+  update-signals:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Generate signals
+      run: python generate_signals.py
+
+    - name: Commit & Push
+      run: |
+        git config user.name "kenny2000j12"
+        git config user.email "kenny2000j12@users.noreply.github.com"
+        git add trade_signals.json
+        git commit -m "update: signals" || echo "No changes"
+        git push https://kenny2000j12:${{ secrets.GH_TOKEN }}@github.com/kenny2000j12/mstz-dashboard.git HEAD:main
 
