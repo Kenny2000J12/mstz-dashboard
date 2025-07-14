@@ -1,41 +1,39 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <title>Quant Signal Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <title>MSTZ 多周期量化信号</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #0d1117; color: #e6edf3; }
-    h1 { font-size: 24px; margin-bottom: 20px; }
-    .signal-block { margin-bottom: 16px; border: 1px solid #444; padding: 10px; border-radius: 10px; }
-    .signal-title { font-weight: bold; }
+    body { font-family: Arial; background: #111; color: #fff; text-align: center; padding: 2em; }
+    h1 { font-size: 2em; }
+    .box { margin: 2em auto; padding: 1em; border: 1px solid #444; width: 80%; }
+    .label { font-weight: bold; font-size: 1.2em; margin-top: 1em; }
+    .signal { font-size: 1.5em; font-weight: bold; color: yellow; }
   </style>
 </head>
 <body>
-  <h1>📈 MSTZ 交易信号面板</h1>
-  <div id="signals">加载中...</div>
+  <h1>MSTZ 多周期量化信号</h1>
+  <div id="content">加载中...</div>
 
   <script>
-    async function fetchSignals() {
-      const res = await fetch('trade_signals.json?' + Date.now());
-      const data = await res.json();
-      const container = document.getElementById('signals');
-      container.innerHTML = '';
-      for (const [key, val] of Object.entries(data)) {
-        const block = document.createElement('div');
-        block.className = 'signal-block';
-        block.innerHTML = `<div class="signal-title">${key} 信号</div>
-          <div>时间: ${val.time}</div>
-          <div>价格: $${val.close}</div>
-          <div>操作建议: ${val.signal}</div>
-          <div>仓位策略: ${val.position}</div>`;
-        container.appendChild(block);
+    async function loadSignals() {
+      try {
+        const res = await fetch("trade_signals.json?cache=" + Date.now());
+        const data = await res.json();
+        const content = Object.entries(data).map(([period, val]) => `
+          <div class="box">
+            <div class="label">${period}</div>
+            <div class="signal">信号：${val["信号"]} ｜ 建议：${val["建议"]}</div>
+          </div>
+        `).join("");
+        document.getElementById("content").innerHTML = content;
+      } catch (err) {
+        document.getElementById("content").innerText = "加载失败";
       }
     }
-    fetchSignals();
-    setInterval(fetchSignals, 120000); // 每2分钟刷新
+
+    loadSignals();
+    setInterval(loadSignals, 2 * 60 * 1000);  // 每2分钟刷新
   </script>
 </body>
 </html>
-    
