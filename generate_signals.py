@@ -1,76 +1,47 @@
+# generate_signals.py
 import yfinance as yf
 import pandas as pd
 import json
-
 from ta.trend import EMAIndicator, MACD
 from ta.momentum import RSIIndicator
 from ta.volatility import BollingerBands
 
+def get_data(interval):
+    data = yf.download("MSTZ", period="2d", interval=interval)
+    data.dropna(inplace=True)
+    return data
 
 def generate_signal(df):
-    # 技术指标
-    ema12 = EMAIndicator(close=df["Close"], window=12).ema_indicator()
-    ema26 = EMAIndicator(close=df["Close"], window=26).ema_indicator()
-    rsi = RSIIndicator(close=df["Close"], window=14).rsi()
-    macd = MACD(close=df["Close"], window_slow=26, window_fast=12, window_sign=9)
-    bb = BollingerBands(close=df["Close"], window=20, window_dev=2)
-
-    df["EMA12"] = ema12
-    df["EMA26"] = ema26
-    df["RSI"] = rsi
-    df["MACD"] = macd.macd()
-    df["Signal"] = macd.macd_signal()
-    df["Upper"] = bb.bollinger_hband()
-    df["Lower"] = bb.bollinger_lband()
-
-    df.dropna(inplace=True)
+    df = df.copy()
+    df['EMA12'] = EMAIndicator(close=df["Close"], window=12).ema_indicator()
+    df['RSI'] = RSIIndicator(close=df["Close"], window=14).rsi()
+    macd = MACD(close=df['Close'])
+    df['MACD'] = macd.macd()
+    df['Signal'] = macd.macd_signal()
+    boll = BollingerBands(close=df['Close'])
+    df['BB_upper'] = boll.bollinger_hband()
+    df['BB_lower'] = boll.bollinger_lband()
 
     last = df.iloc[-1]
-    close = last["Close"]
-
-    signal = "Hold"
-    advice = "No action"
-
-    if (
-        (last["MACD"] > last["Signal"])
-        and (last["RSI"] < 70)
-        and (close > last["EMA12"])
-        and (close < last["Upper"])
-    ):
-        signal = "Buy"
-        advice = "Consider increasing position"
-    elif (
-        (last["MACD"] < last["Signal"])
-        and (last["RSI"] > 30)
-        and (close < last["EMA12"])
-        and (close > last["Lower"])
-    ):
-        signal = "Sell"
-        advice = "Consider reducing position"
-
-    return signal, advice
-
+    if (last['MACD'] > last['Signal']) and (last['RSI'] < 70) and (last['Close'] > last['EMA12']) and (last['Close'] < last['BB_upper']):
+        return "BUY", "Consider adding position"
+    elif (last['MACD'] < last['Signal']) and (last['RSI'] > 30) and (last['Close'] < last['EMA12']) and (last['Close'] > last['BB_lower']):
+        return "SELL", "Consider reducing position"
+    else:
+        return "HOLD", "No action"
 
 def main():
-    ticker = "MSTZ"
-    interval = "2m"
-    data = yf.download(ticker, period="2d", interval=interval)
-    data.dropna(inplace=True)
+    result = {}
+    for interval in ["2m", "15m", "30m"]:
+        try:
+            df = get_data(interval)
+            signal, advice = generate_signal(df)
+            result[interval] = {"signal": signal, "advice": advice}
+        except Exception as e:
+            result[interval] = {"signal": "ERROR", "advice": str(e)}
 
-    signal, advice = generate_signal(data)
-
-    output = {
-        "symbol": ticker,
-        "interval": interval,
-        "signal": signal,
-        "advice": advice,
-    }
-
-    with open("trade_signal.json", "w") as f:
-        json.dump(output, f, indent=4)
-
+    with open("trade_signals.json", "w") as f:
+        json.dump(result, f, indent=2)
 
 if __name__ == "__main__":
     main()
-
-
