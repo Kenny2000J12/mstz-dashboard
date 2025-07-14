@@ -1,39 +1,27 @@
+<!-- 简化但完整的 HTML 页面 -->
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>MSTZ 多周期量化信号</title>
-  <style>
-    body { font-family: Arial; background: #111; color: #fff; text-align: center; padding: 2em; }
-    h1 { font-size: 2em; }
-    .box { margin: 2em auto; padding: 1em; border: 1px solid #444; width: 80%; }
-    .label { font-weight: bold; font-size: 1.2em; margin-top: 1em; }
-    .signal { font-size: 1.5em; font-weight: bold; color: yellow; }
-  </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="120">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSTZ Multi-Signal Dashboard</title>
 </head>
 <body>
-  <h1>MSTZ 多周期量化信号</h1>
-  <div id="content">加载中...</div>
-
-  <script>
-    async function loadSignals() {
-      try {
-        const res = await fetch("trade_signals.json?cache=" + Date.now());
-        const data = await res.json();
-        const content = Object.entries(data).map(([period, val]) => `
-          <div class="box">
-            <div class="label">${period}</div>
-            <div class="signal">信号：${val["信号"]} ｜ 建议：${val["建议"]}</div>
-          </div>
-        `).join("");
-        document.getElementById("content").innerHTML = content;
-      } catch (err) {
-        document.getElementById("content").innerText = "加载失败";
-      }
-    }
-
-    loadSignals();
-    setInterval(loadSignals, 2 * 60 * 1000);  // 每2分钟刷新
-  </script>
+    <h2>📈 MSTZ Multi-Period Trading Signals</h2>
+    <div id="signals"></div>
+    <script>
+        async function loadSignals() {
+            const res = await fetch("trade_signals.json?_=" + new Date().getTime());
+            const data = await res.json();
+            let html = "";
+            for (let key in data) {
+                html += `<h3>${key} Signal: ${data[key].signal}</h3>`;
+                html += `<p>Advice: ${data[key].advice}<br>Updated: ${data[key].timestamp}</p>`;
+            }
+            document.getElementById("signals").innerHTML = html;
+        }
+        loadSignals();
+    </script>
 </body>
 </html>
