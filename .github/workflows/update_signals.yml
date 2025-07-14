@@ -1,15 +1,16 @@
-name: Update Trade Signals
+name: Update Trading Signals
 
 on:
   schedule:
-    - cron: "*/2 * * * *"  # 每2分钟
+    - cron: "*/2 * * * *"
   workflow_dispatch:
 
 jobs:
-  update-signals:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -18,16 +19,17 @@ jobs:
         python-version: '3.11'
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: pip install yfinance pandas
 
     - name: Generate signals
       run: python generate_signals.py
 
-    - name: Commit & Push
+    - name: Commit and push
       run: |
-        git config user.name "kenny2000j12"
-        git config user.email "kenny2000j12@users.noreply.github.com"
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
         git add trade_signals.json
-        git commit -m "update: signals" || echo "No changes"
-        git push https://kenny2000j12:${{ secrets.GH_TOKEN }}@github.com/kenny2000j12/mstz-dashboard.git HEAD:main
-
+        git commit -m "Auto update trade signals" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
